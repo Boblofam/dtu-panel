@@ -1,9 +1,14 @@
 // Lista użytkowników
-const users = {
-  "admin": { password: "admin123", role: "admin" },
+// Jeśli istnieją dane w localStorage, użyj ich. Jeśli nie, ustaw domyślne:
+let users = JSON.parse(localStorage.getItem("users")) || {
   "99394": { password: "tajnehaslo1", role: "viewer" },
-  "21337": { password: "tajnehaslo2", role: "viewer" }
+  "21337": { password: "tajnehaslo2", role: "viewer" },
+  "admin": { password: "admin123", role: "admin" }
 };
+
+// Zapisz je do localStorage jeśli to pierwsze uruchomienie
+localStorage.setItem("users", JSON.stringify(users));
+
 
 function login() {
   const uid = document.getElementById("uid").value;

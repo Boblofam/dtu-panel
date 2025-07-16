@@ -8,22 +8,16 @@ let users = JSON.parse(localStorage.getItem("users")) || {
 let paragrafy = JSON.parse(localStorage.getItem("paragrafy")) || {
   A: [
     { title: "Niestawienie się na RG", code: "A.1", penalty: "Warn" },
-    { title: "Brak reakcji na ogłoszenia DTU", code: "A.2", penalty: "Warn" },
-    { title: "Nieusprawiedliwiona nieobecność na zadaniach", code: "A.3", penalty: "Warn" },
-    { title: "Powtarzająca się nieaktywność wydziałowa", code: "A.4", penalty: "LOTA" }
+    { title: "Brak reakcji na ogłoszenia DTU", code: "A.2", penalty: "Warn" }
   ],
   B: [
-    { title: "Nieodpowiednie zachowanie na RG lub zadaniu", code: "B.1", penalty: "Warn" },
-    { title: "Brak szacunku wobec członków wydziału", code: "B.2", penalty: "Warn" },
-    { title: "Sianie dezinformacji lub toksyczna postawa", code: "B.3", penalty: "LOTA" },
-    { title: "Działanie na szkodę wydziału", code: "B.4", penalty: "Blacklista" }
+    { title: "Nieodpowiednie zachowanie", code: "B.1", penalty: "Warn" }
   ],
-  C: [
-    { title: "Wykonywanie zadań DTU bez odpowiednich rang", code: "C.1", penalty: "Warn" },
-    { title: "Samowolne prowadzenie akcji wydziałowych", code: "C.2", penalty: "Warn" },
-    { title: "Fałszywe raportowanie lub zawyżanie statystyk", code: "C.3", penalty: "LOTA" }
-  ]
+  C: []
 };
+
+localStorage.setItem("paragrafy", JSON.stringify(paragrafy));
+;
 
 // Zapisz dane do localStorage
 function saveData() {

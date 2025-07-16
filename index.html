@@ -1,22 +1,44 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-  <meta charset="UTF-8">
-  <title>Panel Dostępu DTU</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Panel DTU - Paragrafy</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
-<body>
-  <div class="login-container">
-    <img src="logo.png" alt="Logo DTU" class="logo">
-    <h2>Panel Dostępu DTU</h2>
-    <form onsubmit="login(); return false;">
-  <input type="text" id="uid" placeholder="UID (Twoja postać)" required>
-  <input type="password" id="password" placeholder="Hasło" required>
-  <button type="submit">Zaloguj się</button>
-</form>
+<body class="dashboard-body">
+  <div class="container">
+    <h1>Panel Paragrafów DTU</h1>
 
-    <p id="error" class="error-msg"></p>
+    <h2>Paragraf A – Obowiązki i obecność</h2>
+    <div class="card-grid" id="group-A"></div>
+
+    <h2>Paragraf B – Niewłaściwe zachowanie</h2>
+    <div class="card-grid" id="group-B"></div>
+
+    <h2>Paragraf C – Wykonywanie obowiązków bez uprawnień</h2>
+    <div class="card-grid" id="group-C"></div>
+
+    <hr style="margin: 40px 0; border-color: #2d2d3a;">
+
+    <!-- Sekcja dostępna tylko dla admina -->
+    <div id="admin-controls" style="display: none;">
+      <h2>Dodaj nowy paragraf</h2>
+      <form id="addForm">
+        <input type="text" id="section" placeholder="Sekcja (A, B, C)" required />
+        <input type="text" id="title" placeholder="Przewinienie" required />
+        <input type="text" id="code" placeholder="Paragraf (np. A.5)" required />
+        <input type="text" id="penalty" placeholder="Kara" required />
+        <button type="submit">Dodaj paragraf</button>
+      </form>
+
+      <h2>Zarządzanie użytkownikami</h2>
+      <input type="text" id="new-uid" placeholder="Nowy UID" />
+      <input type="password" id="new-pass" placeholder="Hasło" />
+      <button onclick="createUser()">Utwórz użytkownika (viewer)</button>
+    </div>
   </div>
-  <script src="script.js"></script>
+
+  <script src="paragrafy.js"></script>
 </body>
 </html>
