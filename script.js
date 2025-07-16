@@ -1,8 +1,8 @@
-// Lista użytkowników (UID: hasło)
+// Lista użytkowników
 const users = {
+  "admin": { password: "admin123", role: "admin" },
   "99394": { password: "tajnehaslo1", role: "viewer" },
-  "21337": { password: "tajnehaslo2", role: "viewer" },
-  "admin": { password: "admin123", role: "admin" }
+  "21337": { password: "tajnehaslo2", role: "viewer" }
 };
 
 function login() {

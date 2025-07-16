@@ -1,15 +1,11 @@
-// Baza użytkowników (przykładowa — trzymana tymczasowo w JS)
-const users = {
+// Wczytaj dane z localStorage lub użyj domyślnych
+let users = JSON.parse(localStorage.getItem("users")) || {
   "99394": { password: "tajnehaslo1", role: "viewer" },
   "21337": { password: "tajnehaslo2", role: "viewer" },
   "admin": { password: "admin123", role: "admin" }
 };
 
-// Sprawdzenie roli użytkownika z localStorage
-const role = localStorage.getItem("role");
-
-// Początkowe dane paragrafów
-const paragrafy = {
+let paragrafy = JSON.parse(localStorage.getItem("paragrafy")) || {
   A: [
     { title: "Niestawienie się na RG", code: "A.1", penalty: "Warn" },
     { title: "Brak reakcji na ogłoszenia DTU", code: "A.2", penalty: "Warn" },
@@ -29,6 +25,15 @@ const paragrafy = {
   ]
 };
 
+// Zapisz dane do localStorage
+function saveData() {
+  localStorage.setItem("users", JSON.stringify(users));
+  localStorage.setItem("paragrafy", JSON.stringify(paragrafy));
+}
+
+// Sprawdzenie roli
+const role = localStorage.getItem("role");
+
 // Renderowanie paragrafów
 function renderParagrafy() {
   ["A", "B", "C"].forEach(section => {
@@ -44,12 +49,14 @@ function renderParagrafy() {
         <p><strong>Kara:</strong> ${item.penalty}</p>
       `;
 
-      // Tylko admin może usuwać
       if (role === "admin") {
         const delBtn = document.createElement("button");
         delBtn.textContent = "Usuń";
-        delBtn.style.marginTop = "10px";
-        delBtn.onclick = () => removeParagraf(section, index);
+        delBtn.onclick = () => {
+          paragrafy[section].splice(index, 1);
+          saveData();
+          renderParagrafy();
+        };
         card.appendChild(delBtn);
       }
 
@@ -58,14 +65,7 @@ function renderParagrafy() {
   });
 }
 
-// Usuwanie paragrafu – tylko admin
-function removeParagraf(section, index) {
-  if (role !== "admin") return;
-  paragrafy[section].splice(index, 1);
-  renderParagrafy();
-}
-
-// Dodawanie paragrafu – tylko admin
+// Dodawanie paragrafu
 const addForm = document.getElementById("addForm");
 if (addForm) {
   addForm.addEventListener("submit", function (e) {
@@ -83,12 +83,13 @@ if (addForm) {
     }
 
     paragrafy[section].push({ title, code, penalty });
+    saveData();
     renderParagrafy();
     e.target.reset();
   });
 }
 
-// Zarządzanie użytkownikami – tylko admin
+// Tworzenie użytkownika
 function createUser() {
   if (role !== "admin") {
     alert("Brak uprawnień");
@@ -103,11 +104,17 @@ function createUser() {
     return;
   }
 
+  if (users[uid]) {
+    alert("Użytkownik już istnieje!");
+    return;
+  }
+
   users[uid] = { password: pass, role: "viewer" };
-  alert("Użytkownik dodany!");
+  saveData();
+  alert(`Użytkownik ${uid} utworzony jako viewer.`);
 }
 
-// Pokazuj adminowi formularze
+// Pokazuj panel admina tylko adminowi
 window.onload = function () {
   if (role === "admin") {
     document.getElementById("admin-controls").style.display = "block";
@@ -117,4 +124,3 @@ window.onload = function () {
 
   renderParagrafy();
 };
-
