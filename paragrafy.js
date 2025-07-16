@@ -1,4 +1,4 @@
-// Początkowe dane
+// Dane startowe
 const paragrafy = {
   A: [
     { title: "Niestawienie się na RG", code: "A.1", penalty: "Warn" },
@@ -19,6 +19,9 @@ const paragrafy = {
   ]
 };
 
+const role = localStorage.getItem("role");
+
+// RENDER PARAGRAFÓW
 function renderParagrafy() {
   ["A", "B", "C"].forEach(section => {
     const container = document.getElementById("group-" + section);
@@ -31,33 +34,54 @@ function renderParagrafy() {
         <h3>${item.title}</h3>
         <p><strong>Paragraf:</strong> ${item.code}</p>
         <p><strong>Kara:</strong> ${item.penalty}</p>
-        <button onclick="removeParagraf('${section}', ${index})" style="margin-top:10px;">Usuń</button>
+        ${role === "admin" ? `<button onclick="removeParagraf('${section}', ${index})" style="margin-top:10px;">Usuń</button>` : ""}
       `;
       container.appendChild(card);
     });
   });
 }
 
+// USUWANIE PARAGRAFU
 function removeParagraf(section, index) {
+  if (role !== "admin") return;
   paragrafy[section].splice(index, 1);
   renderParagrafy();
 }
 
-document.getElementById("addForm").addEventListener("submit", function(e) {
-  e.preventDefault();
-  const section = document.getElementById("section").value.toUpperCase();
-  const title = document.getElementById("title").value;
-  const code = document.getElementById("code").value;
-  const penalty = document.getElementById("penalty").value;
-
-  if (!paragrafy[section]) {
-    alert("Nieprawidłowa sekcja! Użyj A, B lub C.");
-    return;
-  }
-
-  paragrafy[section].push({ title, code, penalty });
+// DODAWANIE PARAGRAFU
+document.addEventListener("DOMContentLoaded", () => {
   renderParagrafy();
-  e.target.reset();
+
+  if (role === "admin") {
+    document.getElementById("admin-controls").style.display = "block";
+
+    document.getElementById("addForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const section = document.getElementById("section").value.toUpperCase();
+      const title = document.getElementById("title").value;
+      const code = document.getElementById("code").value;
+      const penalty = document.getElementById("penalty").value;
+
+      if (!paragrafy[section]) {
+        alert("Nieprawidłowa sekcja! Użyj A, B lub C.");
+        return;
+      }
+
+      paragrafy[section].push({ title, code, penalty });
+      renderParagrafy();
+      e.target.reset();
+    });
+  }
 });
 
-renderParagrafy();
+// TWORZENIE UŻYTKOWNIKA — tylko admin
+function createUser() {
+  if (role !== "admin") return;
+
+  const uid = document.getElementById("new-uid").value;
+  const pass = document.getElementById("new-pass").value;
+
+  if (uid && pass) {
+    alert(`Użytkownik ${uid} utworzony. (W tej wersji nie jest zapisywany trwale)`);
+  }
+}
