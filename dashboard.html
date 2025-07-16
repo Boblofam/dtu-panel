@@ -1,118 +1,45 @@
-// Dashboard (paragrafy.js lub script.js) — gotowa wersja z localStorage i obsługą admina
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Panel DTU - Paragrafy</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="dashboard-body">
+  <div class="container">
+    <h1>Panel Paragrafów DTU</h1>
 
-// Wczytaj dane użytkowników z localStorage albo ustaw domyślne
-let users = JSON.parse(localStorage.getItem("users")) || {
-  "99394": { password: "tajnehaslo1", role: "viewer" },
-  "21337": { password: "tajnehaslo2", role: "viewer" },
-  "admin": { password: "admin123", role: "admin" }
-};
-localStorage.setItem("users", JSON.stringify(users));
+    <button onclick="logout()">Wyloguj</button>
 
-// Wczytaj dane paragrafów z localStorage albo ustaw domyślne
-let paragrafy = JSON.parse(localStorage.getItem("paragrafy")) || {
-  A: [
-    { title: "Niestawienie się na RG", code: "A.1", penalty: "Warn" },
-    { title: "Brak reakcji na ogłoszenia DTU", code: "A.2", penalty: "Warn" },
-    { title: "Nieusprawiedliwiona nieobecność na zadaniach", code: "A.3", penalty: "Warn" },
-    { title: "Powtarzająca się nieaktywność wydziałowa", code: "A.4", penalty: "LOTA" }
-  ],
-  B: [
-    { title: "Nieodpowiednie zachowanie na RG lub zadaniu", code: "B.1", penalty: "Warn" },
-    { title: "Brak szacunku wobec członków wydziału", code: "B.2", penalty: "Warn" },
-    { title: "Sianie dezinformacji lub toksyczna postawa", code: "B.3", penalty: "LOTA" },
-    { title: "Działanie na szkodę wydziału", code: "B.4", penalty: "Blacklista" }
-  ],
-  C: [
-    { title: "Wykonywanie zadań DTU bez odpowiednich rang", code: "C.1", penalty: "Warn" },
-    { title: "Samowolne prowadzenie akcji wydziałowych", code: "C.2", penalty: "Warn" },
-    { title: "Fałszywe raportowanie lub zawyżanie statystyk", code: "C.3", penalty: "LOTA" }
-  ]
-};
-localStorage.setItem("paragrafy", JSON.stringify(paragrafy));
+    <h2>Paragraf A – Obowiązki i obecność</h2>
+    <div class="card-grid" id="group-A"></div>
 
-// Sprawdzenie roli użytkownika z localStorage
-const role = localStorage.getItem("role");
+    <h2>Paragraf B – Niewłaściwe zachowanie</h2>
+    <div class="card-grid" id="group-B"></div>
 
-// Renderowanie paragrafów
-function renderParagrafy() {
-  ["A", "B", "C"].forEach(section => {
-    const container = document.getElementById("group-" + section);
-    container.innerHTML = "";
+    <h2>Paragraf C – Wykonywanie obowiązków bez uprawnień</h2>
+    <div class="card-grid" id="group-C"></div>
 
-    paragrafy[section].forEach((item, index) => {
-      const card = document.createElement("div");
-      card.className = "card";
-      card.innerHTML = `
-        <h3>${item.title}</h3>
-        <p><strong>Paragraf:</strong> ${item.code}</p>
-        <p><strong>Kara:</strong> ${item.penalty}</p>
-      `;
+    <hr style="margin: 40px 0; border-color: #2d2d3a;">
 
-      if (role === "admin") {
-        const delBtn = document.createElement("button");
-        delBtn.textContent = "Usuń";
-        delBtn.style.marginTop = "10px";
-        delBtn.onclick = () => removeParagraf(section, index);
-        card.appendChild(delBtn);
-      }
+    <div id="admin-controls" style="display: none;">
+      <h2>Dodaj nowy paragraf</h2>
+      <form id="addForm">
+        <input type="text" id="section" placeholder="Sekcja (A, B, C)" required />
+        <input type="text" id="title" placeholder="Przewinienie" required />
+        <input type="text" id="code" placeholder="Paragraf (np. A.5)" required />
+        <input type="text" id="penalty" placeholder="Kara" required />
+        <button type="submit">Dodaj paragraf</button>
+      </form>
 
-      container.appendChild(card);
-    });
-  });
-}
+      <h2>Zarządzanie użytkownikami</h2>
+      <input type="text" id="new-uid" placeholder="Nowy UID" />
+      <input type="password" id="new-pass" placeholder="Hasło" />
+      <button onclick="createUser()">Utwórz użytkownika (viewer)</button>
+    </div>
+  </div>
 
-function removeParagraf(section, index) {
-  if (role !== "admin") return;
-  paragrafy[section].splice(index, 1);
-  localStorage.setItem("paragrafy", JSON.stringify(paragrafy));
-  renderParagrafy();
-}
-
-const addForm = document.getElementById("addForm");
-if (addForm) {
-  addForm.addEventListener("submit", function (e) {
-    e.preventDefault();
-    if (role !== "admin") return;
-
-    const section = document.getElementById("section").value.toUpperCase();
-    const title = document.getElementById("title").value;
-    const code = document.getElementById("code").value;
-    const penalty = document.getElementById("penalty").value;
-
-    if (!paragrafy[section]) {
-      alert("Nieprawidłowa sekcja! Użyj A, B lub C.");
-      return;
-    }
-
-    paragrafy[section].push({ title, code, penalty });
-    localStorage.setItem("paragrafy", JSON.stringify(paragrafy));
-    renderParagrafy();
-    e.target.reset();
-  });
-}
-
-function createUser() {
-  if (role !== "admin") return;
-
-  const uid = document.getElementById("new-uid").value;
-  const pass = document.getElementById("new-pass").value;
-
-  if (!uid || !pass) {
-    alert("Wprowadź UID i hasło.");
-    return;
-  }
-
-  users[uid] = { password: pass, role: "viewer" };
-  localStorage.setItem("users", JSON.stringify(users));
-  alert(`Stworzono użytkownika ${uid} z hasłem: ${pass} (tylko viewer)`);
-}
-
-window.onload = function () {
-  if (role === "admin") {
-    document.getElementById("admin-controls").style.display = "block";
-  } else {
-    document.getElementById("admin-controls").style.display = "none";
-  }
-
-  renderParagrafy();
-};
+  <script src="paragrafy.js"></script>
+</body>
+</html>

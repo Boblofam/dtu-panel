@@ -32,6 +32,9 @@ localStorage.setItem("paragrafy", JSON.stringify(paragrafy));
 
 // Sprawdzenie roli użytkownika z localStorage
 const role = localStorage.getItem("role");
+if (!role) {
+  window.location.href = "index.html";
+}
 
 // Renderowanie paragrafów
 function renderParagrafy() {
@@ -79,9 +82,13 @@ if (addForm) {
     const code = document.getElementById("code").value;
     const penalty = document.getElementById("penalty").value;
 
-    if (!paragrafy[section]) {
-      alert("Nieprawidłowa sekcja! Użyj A, B lub C.");
+    if (!title || !code || !penalty) {
+      alert("Wypełnij wszystkie pola!");
       return;
+    }
+
+    if (!paragrafy[section]) {
+      paragrafy[section] = []; // umożliwia nowe sekcje np. D
     }
 
     paragrafy[section].push({ title, code, penalty });
@@ -110,7 +117,15 @@ function createUser() {
 
   currentUsers[uid] = { password: pass, role: "viewer" };
   localStorage.setItem("users", JSON.stringify(currentUsers));
+  users = currentUsers; // aktualizacja globalnej zmiennej
+
   alert(`Stworzono użytkownika ${uid} z hasłem: ${pass} (tylko viewer)`);
+}
+
+function logout() {
+  localStorage.removeItem("uid");
+  localStorage.removeItem("role");
+  window.location.href = "index.html";
 }
 
 window.onload = function () {

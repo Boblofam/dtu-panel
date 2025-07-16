@@ -1,18 +1,20 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-  <meta charset="UTF-8">
-  <title>Logowanie do Panelu DTU</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Panel DTU - Logowanie</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
-<body>
-  <div class="container">
-    <h1>Logowanie do panelu DTU</h1>
+<body class="login-body">
+  <div class="login-container">
+    <h1>Logowanie do Panelu DTU</h1>
     <form id="loginForm">
       <input type="text" id="uid" placeholder="UID" required />
       <input type="password" id="password" placeholder="Hasło" required />
-      <button type="submit">Zaloguj</button>
+      <button type="submit">Zaloguj się</button>
     </form>
+    <p id="login-error" style="color: red; display: none;">Nieprawidłowy UID lub hasło</p>
   </div>
 
   <script src="login.js"></script>
