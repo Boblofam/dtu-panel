@@ -1,21 +1,22 @@
-<!DOCTYPE html>
-<html lang="pl">
-<head>
-  <meta charset="UTF-8">
-  <title>Logowanie DTU</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <div class="container">
-    <h1>Logowanie do panelu DTU</h1>
-    <form id="loginForm">
-      <input type="text" id="uid" placeholder="UID" required />
-      <input type="password" id="password" placeholder="Hasło" required />
-      <button type="submit">Zaloguj</button>
-    </form>
-    <p id="error" style="color: red;"></p>
-  </div>
+// login.js — logowanie z użyciem localStorage
 
-  <script src="login.js"></script>
-</body>
-</html>
+document.getElementById("loginForm").addEventListener("submit", function (e) {
+  e.preventDefault();
+
+  const uid = document.getElementById("uid").value;
+  const password = document.getElementById("password").value;
+
+  // Pobierz użytkowników z localStorage
+  const users = JSON.parse(localStorage.getItem("users")) || {};
+
+  if (users[uid] && users[uid].password === password) {
+    // Zapisz dane do sesji (localStorage)
+    localStorage.setItem("uid", uid);
+    localStorage.setItem("role", users[uid].role);
+
+    // Przekieruj do dashboard
+    window.location.href = "dashboard.html";
+  } else {
+    alert("Nieprawidłowy UID lub hasło.");
+  }
+});

@@ -1,4 +1,3 @@
-
 // Dashboard (paragrafy.js lub script.js) — gotowa wersja z localStorage i obsługą admina
 
 // Wczytaj dane użytkowników z localStorage albo ustaw domyślne
@@ -103,8 +102,14 @@ function createUser() {
     return;
   }
 
-  users[uid] = { password: pass, role: "viewer" };
-  localStorage.setItem("users", JSON.stringify(users));
+  let currentUsers = JSON.parse(localStorage.getItem("users")) || {};
+  if (currentUsers[uid]) {
+    alert("Użytkownik o tym UID już istnieje.");
+    return;
+  }
+
+  currentUsers[uid] = { password: pass, role: "viewer" };
+  localStorage.setItem("users", JSON.stringify(currentUsers));
   alert(`Stworzono użytkownika ${uid} z hasłem: ${pass} (tylko viewer)`);
 }
 
