@@ -1,3 +1,4 @@
+// Początkowe dane
 const paragrafy = {
   A: [
     { title: "Niestawienie się na RG", code: "A.1", penalty: "Warn" },
@@ -18,8 +19,9 @@ const paragrafy = {
   ]
 };
 
+// Renderowanie paragrafów
 function renderParagrafy() {
-  const role = localStorage.getItem("role");
+  const userRole = localStorage.getItem("role");
 
   ["A", "B", "C"].forEach(section => {
     const container = document.getElementById("group-" + section);
@@ -32,42 +34,43 @@ function renderParagrafy() {
         <h3>${item.title}</h3>
         <p><strong>Paragraf:</strong> ${item.code}</p>
         <p><strong>Kara:</strong> ${item.penalty}</p>
-        ${role === "admin" ? `<button onclick="removeParagraf('${section}', ${index})">Usuń</button>` : ""}
+        ${userRole === "admin" ? `<button onclick="removeParagraf('${section}', ${index})" style="margin-top:10px;">Usuń</button>` : ""}
       `;
       container.appendChild(card);
     });
   });
 
-  // Pokaż formularz tylko dla admina
-  if (role === "admin") {
+  // Pokazuj adminowi kontrolki
+  if (userRole === "admin") {
     document.getElementById("admin-controls").style.display = "block";
   } else {
     document.getElementById("admin-controls").style.display = "none";
   }
 }
 
+// Usuwanie paragrafu (tylko dla admina)
 function removeParagraf(section, index) {
-  const role = localStorage.getItem("role");
-  if (role !== "admin") {
-    alert("Brak uprawnień do usuwania.");
+  if (localStorage.getItem("role") !== "admin") {
+    alert("Nie masz uprawnień do usuwania.");
     return;
   }
+
   paragrafy[section].splice(index, 1);
   renderParagrafy();
 }
 
+// Dodawanie nowego paragrafu (formularz admina)
 document.getElementById("addForm").addEventListener("submit", function(e) {
   e.preventDefault();
-  const role = localStorage.getItem("role");
-  if (role !== "admin") {
-    alert("Brak uprawnień do dodawania.");
-    return;
-  }
-
   const section = document.getElementById("section").value.toUpperCase();
   const title = document.getElementById("title").value;
   const code = document.getElementById("code").value;
   const penalty = document.getElementById("penalty").value;
+
+  if (localStorage.getItem("role") !== "admin") {
+    alert("Brak uprawnień do dodawania.");
+    return;
+  }
 
   if (!paragrafy[section]) {
     alert("Nieprawidłowa sekcja! Użyj A, B lub C.");
@@ -79,22 +82,24 @@ document.getElementById("addForm").addEventListener("submit", function(e) {
   e.target.reset();
 });
 
+// Tworzenie nowego użytkownika
 function createUser() {
-  const role = localStorage.getItem("role");
-  if (role !== "admin") {
-    alert("Brak uprawnień do tworzenia kont.");
+  if (localStorage.getItem("role") !== "admin") {
+    alert("Brak uprawnień do tworzenia użytkowników.");
     return;
   }
 
   const uid = document.getElementById("new-uid").value;
-  const pass = document.getElementById("new-pass").value;
+  const password = document.getElementById("new-pass").value;
 
-  if (!uid || !pass) {
-    alert("Podaj UID i hasło.");
+  if (!uid || !password) {
+    alert("Uzupełnij UID i hasło.");
     return;
   }
 
-  alert(`Użytkownik ${uid} (viewer) został stworzony — zapisz ręcznie w kodzie (local).`);
+  // Tutaj normalnie dodałbyś do bazy danych
+  alert(`Użytkownik ${uid} utworzony. (Symulacja - nie zapisano nigdzie)`);
 }
 
+// Start
 renderParagrafy();
