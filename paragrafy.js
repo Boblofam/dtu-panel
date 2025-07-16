@@ -1,4 +1,5 @@
-// Lista paragrafów
+// Gotowy plik paragrafy.js z poprawną obsługą ról
+
 const paragrafy = {
   A: [
     { title: "Niestawienie się na RG", code: "A.1", penalty: "Warn" },
@@ -19,16 +20,10 @@ const paragrafy = {
   ]
 };
 
-// Odczyt UID i roli z localStorage
+// Obsługa roli użytkownika z localStorage
 const uid = localStorage.getItem("uid");
 const role = localStorage.getItem("role");
 
-// Pokazanie panelu admina tylko jeśli rola to "admin"
-if (role === "admin") {
-  document.getElementById("admin-controls").style.display = "block";
-}
-
-// Rysowanie kart paragrafów
 function renderParagrafy() {
   ["A", "B", "C"].forEach(section => {
     const container = document.getElementById("group-" + section);
@@ -41,64 +36,62 @@ function renderParagrafy() {
         <h3>${item.title}</h3>
         <p><strong>Paragraf:</strong> ${item.code}</p>
         <p><strong>Kara:</strong> ${item.penalty}</p>
-        ${role === "admin" ? `<button onclick="removeParagraf('${section}', ${index})" style="margin-top:10px;">Usuń</button>` : ""}
       `;
+
+      // Dodaj przycisk usuń tylko dla admina
+      if (role === "admin") {
+        const btn = document.createElement("button");
+        btn.textContent = "Usuń";
+        btn.style.marginTop = "10px";
+        btn.onclick = () => removeParagraf(section, index);
+        card.appendChild(btn);
+      }
+
       container.appendChild(card);
     });
   });
 }
 
-// Usuwanie paragrafu (tylko admin)
 function removeParagraf(section, index) {
-  if (role !== "admin") {
-    alert("Brak uprawnień do usuwania paragrafów.");
-    return;
-  }
-
+  if (role !== "admin") return;
   paragrafy[section].splice(index, 1);
   renderParagrafy();
 }
 
-// Dodawanie paragrafu (tylko admin)
-document.getElementById("addForm").addEventListener("submit", function(e) {
-  e.preventDefault();
+const form = document.getElementById("addForm");
+if (form) {
+  form.addEventListener("submit", function(e) {
+    e.preventDefault();
+    if (role !== "admin") return;
 
-  if (role !== "admin") {
-    alert("Brak uprawnień do dodawania paragrafów.");
-    return;
-  }
+    const section = document.getElementById("section").value.toUpperCase();
+    const title = document.getElementById("title").value;
+    const code = document.getElementById("code").value;
+    const penalty = document.getElementById("penalty").value;
 
-  const section = document.getElementById("section").value.toUpperCase();
-  const title = document.getElementById("title").value;
-  const code = document.getElementById("code").value;
-  const penalty = document.getElementById("penalty").value;
+    if (!paragrafy[section]) {
+      alert("Nieprawidłowa sekcja! Użyj A, B lub C.");
+      return;
+    }
 
-  if (!paragrafy[section]) {
-    alert("Nieprawidłowa sekcja! Użyj A, B lub C.");
-    return;
-  }
-
-  paragrafy[section].push({ title, code, penalty });
-  renderParagrafy();
-  e.target.reset();
-});
-
-// Tworzenie nowego użytkownika (tylko admin)
-function createUser() {
-  if (role !== "admin") {
-    alert("Brak uprawnień do tworzenia użytkowników.");
-    return;
-  }
-
-  const newUID = document.getElementById("new-uid").value;
-  const newPass = document.getElementById("new-pass").value;
-
-  if (!newUID || !newPass) {
-    alert("UID i hasło są wymagane.");
-    return;
-  }
-
-  alert(`Nowy użytkownik ${newUID} utworzony (rola: viewer).`);
+    paragrafy[section].push({ title, code, penalty });
+    renderParagrafy();
+    e.target.reset();
+  });
 }
 
-renderParagrafy();
+function createUser() {
+  if (role !== "admin") return;
+  const newUid = document.getElementById("new-uid").value;
+  const newPass = document.getElementById("new-pass").value;
+  alert(`Stworzono użytkownika ${newUid} z hasłem: ${newPass} (tylko viewer)\nMusisz go dodać ręcznie do pliku users w script.js.`);
+}
+
+// Ukryj panel admina jeśli nie admin
+window.addEventListener("DOMContentLoaded", () => {
+  if (role === "admin") {
+    document.getElementById("admin-controls").style.display = "block";
+  }
+
+  renderParagrafy();
+});

@@ -21,14 +21,22 @@
 
     <hr style="margin: 40px 0; border-color: #2d2d3a;">
 
-    <h2>Dodaj nowy paragraf</h2>
-    <form id="addForm">
-      <input type="text" id="section" placeholder="Sekcja (A, B, C)" required />
-      <input type="text" id="title" placeholder="Przewinienie" required />
-      <input type="text" id="code" placeholder="Paragraf (np. A.5)" required />
-      <input type="text" id="penalty" placeholder="Kara" required />
-      <button type="submit">Dodaj paragraf</button>
-    </form>
+    <!-- Sekcja dostępna tylko dla admina -->
+    <div id="admin-controls" style="display: none;">
+      <h2>Dodaj nowy paragraf</h2>
+      <form id="addForm">
+        <input type="text" id="section" placeholder="Sekcja (A, B, C)" required />
+        <input type="text" id="title" placeholder="Przewinienie" required />
+        <input type="text" id="code" placeholder="Paragraf (np. A.5)" required />
+        <input type="text" id="penalty" placeholder="Kara" required />
+        <button type="submit">Dodaj paragraf</button>
+      </form>
+
+      <h2>Zarządzanie użytkownikami</h2>
+      <input type="text" id="new-uid" placeholder="Nowy UID" />
+      <input type="password" id="new-pass" placeholder="Hasło" />
+      <button onclick="createUser()">Utwórz użytkownika (viewer)</button>
+    </div>
   </div>
 
   <script src="paragrafy.js"></script>

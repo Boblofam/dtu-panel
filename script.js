@@ -1,20 +1,20 @@
 // Lista użytkowników (UID: hasło)
 const users = {
-  "99394": "tajnehaslo1",
-  "21337": "tajnehaslo2",
-  "admin": "admin123"
+  "99394": { password: "tajnehaslo1", role: "viewer" },
+  "21337": { password: "tajnehaslo2", role: "viewer" },
+  "admin": { password: "admin123", role: "admin" }
 };
 
 function login() {
-  const uid = document.getElementById("uid").value.trim();
-  const password = document.getElementById("password").value.trim();
+  const uid = document.getElementById("uid").value;
+  const password = document.getElementById("password").value;
   const errorMsg = document.getElementById("error");
 
-  if (users[uid] && users[uid] === password) {
-    // Poprawne logowanie
+  if (users[uid] && users[uid].password === password) {
+    localStorage.setItem("uid", uid);
+    localStorage.setItem("role", users[uid].role);
     window.location.href = "dashboard.html";
   } else {
-    // Błąd logowania
     errorMsg.textContent = "Nieprawidłowy UID lub hasło.";
   }
 }
